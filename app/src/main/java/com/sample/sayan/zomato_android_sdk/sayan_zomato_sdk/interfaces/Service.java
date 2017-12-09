@@ -2,10 +2,14 @@ package com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.interfaces;
 
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.CategoryResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.CuisinesResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.DailyMenuOfRestaurantResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.DetailRestaurantInfoResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.NearByGeocodeResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.RestaurantCollectionsResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.RestaurantEstablishmentsResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.RestaurantReviewsResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.SearchCitiesResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.SearchResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.ZomatoLocationDetailsResponse;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.ZomatoLocationsResponse;
 
@@ -25,6 +29,7 @@ import retrofit2.http.QueryMap;
 
 public interface Service {
 
+    ///////////////////////***********************Common*****************************//////////////////////////
     /**
      * Get a list of categories. List of all restaurants categorized
      * under a particular restaurant type can be obtained using /Search
@@ -155,6 +160,10 @@ public interface Service {
     @GET("/api/v2.1/geocode")
     Call<NearByGeocodeResponse> nearByGeocodeByLatLon(@Query("lat") String latitude, @Query("lon") String longitude);
 
+
+
+
+    ////////////////////////****************Location*******************////////////////////////////
     /**
      * Search for Zomato locations by keyword. Provide coordinates to get better search results
      *
@@ -182,5 +191,75 @@ public interface Service {
     @GET("/api/v2.1/location_details")
     Call<ZomatoLocationDetailsResponse> getZomatoLocationDetails(@Query("entity_id") String entityId, @Query("entity_type") String entityType);
 
+
+    ////////////////////////****************Restaurant*******************////////////////////////////
+
+    /**
+     * Get daily menu using Zomato restaurant ID.
+     *
+     * @param resId id of restaurant whose details are requested
+     *
+     * @return the request {@link Call}
+     */
+    @GET("/api/v2.1/dailymenu")
+    Call<DailyMenuOfRestaurantResponse> getDailyMenuOfRestaurant(@Query("res_id") String resId);
+
+
+ /**
+     * Get detailed restaurant information using Zomato restaurant ID.
+     * Partner Access is required to access photos and reviews.
+     *
+     * @param resId id of restaurant whose details are requested
+     *
+     * @return the request {@link Call}
+     */
+    @GET("/api/v2.1/restaurant")
+    Call<DetailRestaurantInfoResponse> getDetailRestaurantInfo(@Query("res_id") String resId);
+
+    /**
+     * Get restaurant reviews using the Zomato restaurant ID.
+     * Only 5 latest reviews are available under the Basic API plan.
+     *
+     * @param resId id of restaurant whose details are requested
+     *
+     * @param start fetch results after this offset
+     *
+     * @param count max number of results to retrieve
+     *
+     * @return the request {@link Call}
+     */
+    @GET("/api/v2.1/reviews")
+    Call<RestaurantReviewsResponse> getRestaurantReviews(@Query("res_id") String resId, @Query("start") String start, @Query("count") String count);
+
+
+    /**
+     * The location input can be specified using Zomato location ID or coordinates. Cuisine / Establishment / Collection IDs can be obtained from respective api calls. Get up to 100 restaurants by changing the 'start' and 'count' parameters with the maximum value of count being 20. Partner Access is required to access photos and reviews.
+     * Examples:
+     * To search for 'Italian' restaurants in 'Manhattan, New York City', set cuisines = 55, entity_id = 94741 and entity_type = zone
+     * To search for 'cafes' in 'Manhattan, New York City', set establishment_type = 1, entity_type = zone and entity_id = 94741
+     * Get list of all restaurants in 'Trending this Week' collection in 'New York City' by using entity_id = 280, entity_type = city and collection_id = 1
+     *
+     * Example Request:
+     *  https://developers.zomato.com/api/v2.1/search?entity_id=1&entity_type=city&q=kol&start=0&count=5&lat=22.63&lon=88.43&radius=5000&cuisines=2&establishment_type=4&collection_id=3&category=1&sort=real_distance&order=asc
+     * @param queryParameters the following parameters can be send for search...
+     *                1) entity_id, value = location id
+     *                2) entity_type, value = location type
+     *                3) q, value = search keyword
+     *                4) count, value = fetch results after offset
+     *                4) count = count, value = max number of results to display
+     *                4) lat = count, value = latitude
+     *                4) lon = count, value = longitude
+     *                4) radius = count, value = radius around (lat,lon); to define search area, defined in meters(M)
+     *                4) cuisines = count, value = list of cuisine id's separated by comma
+     *                4) establishment_type = estblishment id obtained from establishments call
+     *                4) collection_id = count, value = collection id obtained from collections call
+     *                4) category = count, value = category ids obtained from categories call
+     *                4) sort = count, value = sort restaurants by ... (cost, rating, real_distance)
+     *                4) order = count, value = used with 'sort' parameter to define ascending / descending (asc, desc)
+     *
+     * @return the request {@link Call}
+     */
+    @GET("/api/v2.1/search")
+    Call<SearchResponse> search(@QueryMap Map<String, String> queryParameters);
 
 }
