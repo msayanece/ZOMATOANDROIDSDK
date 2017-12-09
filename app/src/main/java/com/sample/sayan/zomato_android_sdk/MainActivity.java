@@ -8,6 +8,15 @@ import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.SessionConfig;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.ZomatoApi;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.interfaces.Service;
 import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.CategoryResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.CuisinesResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.NearByGeocodeResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.RestaurantCollectionsResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.RestaurantEstablishmentsResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.SearchCitiesResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.ZomatoLocationDetailsResponse;
+import com.sample.sayan.zomato_android_sdk.sayan_zomato_sdk.responses.ZomatoLocationsResponse;
+
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,15 +41,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getAllCategories() {
-        mService.getAllCategories().enqueue(new Callback<CategoryResponse>() {
+        HashMap<String, String> queryParamsMap = new HashMap<>();
+        queryParamsMap.put("query", "dum");
+        mService.getZomatoLocationDetails("1121", "subzone").enqueue(new Callback<ZomatoLocationDetailsResponse>() {
             @Override
-            public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
-
-                Toast.makeText(MainActivity.this, "success: " + response.body().getCategories().get(0).getCategories().getId() +"- "+ response.body().getCategories().get(0).getCategories().getName(), Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ZomatoLocationDetailsResponse> call, Response<ZomatoLocationDetailsResponse> response) {
+                Toast.makeText(MainActivity.this, "success: " + response.body().getBestRatedRestaurant().get(0).getRestaurant().getName(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(Call<CategoryResponse> call, Throwable t) {
+            public void onFailure(Call<ZomatoLocationDetailsResponse> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
             }
         });
